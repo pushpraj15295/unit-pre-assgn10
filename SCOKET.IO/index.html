@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>masai chat</title>
+</head>
+
+<body>
+
+    <div id="messages"></div>
+
+    <form id="form" onsubmit="submit">
+        <input type="text" id="text" placeholder="send something...">
+        <input type="submit">
+    </form>
+
+    <script src="socket.io/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        const form = document.getElementById("form");
+        const text = document.getElementById("text");
+        const messages = document.getElementById("messages")
+
+        // message sending from client side
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (text.value) {
+                socket.emit("new message", text.value)
+            }
+
+            text.value = "";
+        })
+
+        // listing from server side as simple as that
+        socket.on("new connection", (data) => {
+            const span = document.createElement("div")
+            span.innerText = data
+            messages.appendChild(span)
+        })
+
+        // socket.on("newuser", () => {
+        //     alert("new user joined chat")
+        // })
+
+        socket.on("history", (history) => {
+            console.log(history)
+            // for (let h of history) {
+            //     const span = document.createElement("div")
+            //     span.innerText = h;
+            //     messages.appendChild(span)
+            // }
+
+            history.map((h) => {
+                const span = document.createElement("div")
+                span.innerText = h;
+                messages.appendChild(span)
+            })
+        })
+
+    </script>
+</body>
+
+</html>
